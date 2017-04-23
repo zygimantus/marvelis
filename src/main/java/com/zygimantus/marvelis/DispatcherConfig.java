@@ -30,6 +30,7 @@ public class DispatcherConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
+        registry.addResourceHandler("/js/**").addResourceLocations("/js/");
     }
 
     @Override
