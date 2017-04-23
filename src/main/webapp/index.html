@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="MarvelisApp">
+
+<head>
+  <meta http-equiv="Author" content="Zygimantus" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDEX</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+  <script>
+    function MyDataService() {
+      return {
+        getWorlds: function getWorlds() {
+          return ["this world", "another world"];
+        }
+      };
+    }
+
+    function DemoController(worldsService) {
+      var vm = this;
+      vm.messages = worldsService.getWorlds().map(function(w) {
+        return "Hello, " + w + "!";
+      });
+    }
+
+    function startup($rootScope, $window) {
+      $rootScope.hasStarted = true;
+    }
+
+    angular.module("MarvelisApp", [ /* module dependencies go here */ ]).service("worldsService", [MyDataService]).controller("demoController", ["worldsService", DemoController]).config(function() {
+      console.log('configuring application');
+    }).run(["$rootScope", "$window", startup]);
+  </script>
+</head>
+
+<body ng-class="{ 'started': hasStarted }" ng-cloak>
+  <div ng-controller="demoController as vm">
+    <ul>
+      <li ng-repeat="msg in vm.messages">{{ msg}}</li>
+    </ul>
+  </div>
+</body>
+
+</html>
