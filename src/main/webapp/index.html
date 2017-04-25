@@ -7,7 +7,35 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>INDEX</title>
+  <style>
+    pre {
+      outline: 1px solid #ccc;
+      padding: 5px;
+      margin: 5px;
+    }
+
+    .string {
+      color: green;
+    }
+
+    .number {
+      color: darkorange;
+    }
+
+    .boolean {
+      color: blue;
+    }
+
+    .null {
+      color: magenta;
+    }
+
+    .key {
+      color: red;
+    }
+  </style>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
     function MyDataService() {
       return {
@@ -28,9 +56,42 @@
       $rootScope.hasStarted = true;
     }
 
-    angular.module("MarvelisApp", [ /* module dependencies go here */ ]).service("worldsService", [MyDataService]).controller("demoController", ["worldsService", DemoController]).config(function() {
-      console.log('configuring application');
-    }).run(["$rootScope", "$window", startup]);
+    angular.module("MarvelisApp", [ /* module dependencies go here */ ])
+      .service("worldsService", [MyDataService])
+      .controller("demoController", ["worldsService", DemoController])
+      .controller('MarvelController', function($scope, $http) {
+        $http.get('test').
+        then(function(response) {
+          $scope.data = response.data;
+
+          var str = JSON.stringify(response.data, undefined, 4);
+
+          output(syntaxHighlight(str));
+        });
+      })
+      .config(function() {
+        console.log('configuring application');
+      })
+      .run(["$rootScope", "$window", startup]);
+
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'key';
+          } else {
+            cls = 'string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'boolean';
+        } else if (/null/.test(match)) {
+          cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
   </script>
 </head>
 
@@ -39,6 +100,9 @@
     <ul>
       <li ng-repeat="msg in vm.messages">{{ msg}}</li>
     </ul>
+  </div>
+  <div ng-controller="MarvelController">
+    <p>{{data}}</p>
   </div>
 </body>
 
