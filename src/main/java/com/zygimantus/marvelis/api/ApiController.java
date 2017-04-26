@@ -11,6 +11,7 @@ import java.io.IOException;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,13 +49,13 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
-    @RequestMapping("test")
-    protected MarvelCharacter test() throws IOException {
+    @RequestMapping("character/{id}")
+    protected MarvelCharacter character(@PathVariable("id") int id) throws IOException {
 
 //        CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
 //        CharactersQuery spider = CharactersQuery.Builder.create().withOffset(0).withLimit(10).build();
 //        MarvelResponse<CharactersDto> all = characterApiClient.getAll(spider);
-        Result<MarvelCharacter> character = restClient.getCharacter(BLACK_WIDOW_ID);
+        Result<MarvelCharacter> character = restClient.getCharacter(id);
 
         MarvelCharacter one = character.getData().getResults().get(0);
 

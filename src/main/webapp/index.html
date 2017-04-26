@@ -91,12 +91,10 @@
       .service("worldsService", [MyDataService])
       .controller("demoController", ["worldsService", DemoController])
       .controller('MarvelController', function($scope, $http) {
-        $http.get('test').
-        then(function(response) {
+        $http.get('character/1009189').then(function(response) {
           $scope.data = response.data;
 
           var str = JSON.stringify(response.data, undefined, 4);
-
           output(syntaxHighlight(str));
         });
       })
