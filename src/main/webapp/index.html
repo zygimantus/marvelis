@@ -54,6 +54,7 @@
   <div ng-controller="TabsController" ng-cloak>
     <md-content id="tabsContent">
     </md-content>
+    <pre ng-bind-html="data"></pre>
   </div>
 
   <!-- Angular Material requires Angular.js Libraries -->
@@ -90,15 +91,10 @@
     angular.module("MarvelisApp", ['ngMaterial'])
       .service("worldsService", [MyDataService])
       // .controller("demoController", ["worldsService", DemoController])
-      .controller('MarvelController', function($scope, $http) {
-        $http.get('character/1009189').then(function(response) {
-          // $scope.data = response.data;
-
-          var str = JSON.stringify(response.data, undefined, 4);
-          output(syntaxHighlight(str));
-        });
+      .controller('MarvelController', function($scope) {
+        // TODO
       })
-      .controller('TabsController', function($scope, $templateRequest, $sce, $compile) {
+      .controller('TabsController', function($scope, $templateRequest, $sce, $compile, $http) {
         // Make sure that no bad URLs are fetched. You can omit this if your template URL is
         // not dynamic.
         var templateUrl = $sce.getTrustedResourceUrl('templates/tabs.html');
@@ -119,7 +115,10 @@
         };
 
         $scope.search = function() {
-          alert('Entered:' + $scope.character.id);
+          $http.get('character/' + $scope.character.id).then(function(response) {
+            var str = JSON.stringify(response.data, undefined, 4);
+            $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
+          });
         };
 
       })
@@ -127,10 +126,6 @@
         console.log('configuring application');
       })
       .run(["$rootScope", "$window", startup]);
-
-    function output(inp) {
-      document.body.appendChild(document.createElement('pre')).innerHTML = inp;
-    }
 
     function syntaxHighlight(json) {
       json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
