@@ -37,6 +37,8 @@
 
   <!-- Angular Material style sheet -->
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <link rel="stylesheet" href="http:////cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="css/angular-datatables.min.css">
 
 </head>
 
@@ -57,6 +59,9 @@
     <pre ng-bind-html="data"></pre>
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
   <!-- Angular Material requires Angular.js Libraries -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
@@ -66,7 +71,7 @@
   <!-- Angular Material Library -->
   <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="js/angular-datatables.min.js"></script>
 
   <script>
     function MyDataService() {
@@ -88,7 +93,7 @@
       $rootScope.hasStarted = true;
     }
 
-    angular.module("MarvelisApp", ['ngMaterial'])
+    angular.module("MarvelisApp", ['ngMaterial', 'datatables'])
       .service("worldsService", [MyDataService])
       // .controller("demoController", ["worldsService", DemoController])
       .controller('MarvelController', function($scope) {
@@ -122,6 +127,7 @@
         };
 
       })
+      .controller('WithAjaxCtrl', WithAjaxCtrl)
       .config(function() {
         console.log('configuring application');
       })
@@ -144,6 +150,17 @@
         }
         return '<span class="' + cls + '">' + match + '</span>';
       });
+    }
+
+    function WithAjaxCtrl(DTOptionsBuilder, DTColumnBuilder) {
+      var vm = this;
+      vm.dtOptions = DTOptionsBuilder.fromSource('templates/data.json')
+        .withPaginationType('full_numbers');
+      vm.dtColumns = [
+        DTColumnBuilder.newColumn('id').withTitle('ID'),
+        DTColumnBuilder.newColumn('name').withTitle('Name'),
+        DTColumnBuilder.newColumn('modified').withTitle('odified').notVisible()
+      ];
     }
   </script>
 

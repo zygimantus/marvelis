@@ -3,11 +3,13 @@ package com.zygimantus.marvelis.api;
 import com.github.codingricky.marvel.RestClient;
 import com.github.codingricky.marvel.model.MarvelCharacter;
 import com.github.codingricky.marvel.model.Result;
+import com.github.codingricky.marvel.parameter.CharacterParameters;
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
 import com.zygimantus.marvelis.JsonResponse;
 import java.io.IOException;
+import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,8 +27,6 @@ public class ApiController extends AController<JsonResponse> {
 
     private static String PUBLIC_KEY;
     private static String PRIVATE_KEY;
-
-    protected static final int BLACK_WIDOW_ID = 1009189;
 
     MarvelApiConfig marvelApiConfig;
     RestClient restClient;
@@ -49,6 +49,16 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
+    @RequestMapping("characters")
+    protected List<MarvelCharacter> characters() throws IOException {
+
+        Result<MarvelCharacter> characters = restClient.getCharacters(new CharacterParameters());
+
+        List<MarvelCharacter> list = characters.getData().getResults();
+
+        return list;
+    }
+
     @RequestMapping("character/{id}")
     protected MarvelCharacter character(@PathVariable("id") int id) throws IOException {
 
@@ -58,8 +68,6 @@ public class ApiController extends AController<JsonResponse> {
         Result<MarvelCharacter> character = restClient.getCharacter(id);
 
         MarvelCharacter one = character.getData().getResults().get(0);
-
-        System.out.println(one.toString());
 
         return one;
     }
