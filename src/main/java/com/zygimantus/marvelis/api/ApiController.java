@@ -8,6 +8,7 @@ import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
 import com.zygimantus.marvelis.JsonResponse;
+import gumi.builders.UrlBuilder;
 import java.io.IOException;
 import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -35,12 +37,11 @@ public class ApiController extends AController<JsonResponse> {
 
     @Override
     protected void init() {
-//        marvelApiConfig = new MarvelApiConfig.Builder(PUBLIC_KEY, PRIVATE_KEY).debug().build();
-
         PUBLIC_KEY = appConfig.publicKey();
         PRIVATE_KEY = appConfig.privateKey();
 
         restClient = new RestClient(PRIVATE_KEY, PUBLIC_KEY);
+//        marvelApiConfig = new MarvelApiConfig.Builder(PUBLIC_KEY, PRIVATE_KEY).debug().build();
     }
 
     @Override
@@ -49,10 +50,41 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
-    @RequestMapping("characters")
-    protected List<MarvelCharacter> characters() throws IOException {
+    @RequestMapping(value = "test", produces = "application/json")
+    protected String test(@RequestParam(value = "limit", required = false) String limit,
+            @RequestParam(value = "offset", required = false) String offset) throws IOException {
 
-        Result<MarvelCharacter> characters = restClient.getCharacters(new CharacterParameters());
+        System.out.println(limit);
+        System.out.println(offset);
+
+        CharacterParameters characterParameters = new CharacterParameters();
+
+        UrlBuilder urlBuilder = UrlBuilder.empty();
+        urlBuilder.addParameter("limit", limit);
+        urlBuilder.addParameter("offset", offset);
+
+        characterParameters.addParameters(urlBuilder);
+
+        Result<MarvelCharacter> characters = restClient.getCharacters(characterParameters);
+
+        String list = characters.getRawResponse();
+
+        return list;
+    }
+
+    @RequestMapping("characters")
+    protected List<MarvelCharacter> characters(@RequestParam(value = "limit", required = false) String limit,
+            @RequestParam(value = "offset", required = false) String offset) throws IOException {
+
+        CharacterParameters characterParameters = new CharacterParameters();
+
+        UrlBuilder urlBuilder = UrlBuilder.empty();
+        urlBuilder.addParameter("limit", limit);
+        urlBuilder.addParameter("offset", offset);
+
+        characterParameters.addParameters(urlBuilder);
+
+        Result<MarvelCharacter> characters = restClient.getCharacters(characterParameters);
 
         List<MarvelCharacter> list = characters.getData().getResults();
 

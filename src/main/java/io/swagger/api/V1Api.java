@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-05-06T14:36:16.418+03:00")
 
 @Api(value = "v1", description = "the v1 API")
-public interface V1Api {
+public interface V1Api<T> {
 
     @ApiOperation(value = "Fetches lists of events filtered by a character id.", notes = "Fetches lists of events in which a specific character appears, with optional filters. See notes on individual parameters below.", response = Void.class, tags = {"docspublic",})
     @ApiResponses(value = {
@@ -36,7 +36,7 @@ public interface V1Api {
         @ApiResponse(code = 404, message = "Character not found.", response = Void.class)})
     @RequestMapping(value = "/v1/public/characters/{characterId}",
             method = RequestMethod.GET)
-    ResponseEntity<Void> getCharacterIndividual(@ApiParam(value = "A single character id.", required = true) @PathVariable("characterId") Integer characterId);
+    ResponseEntity<T> getCharacterIndividual(@ApiParam(value = "A single character id.", required = true) @PathVariable("characterId") Integer characterId);
 
     @ApiOperation(value = "Fetches lists of series filtered by a character id.", notes = "Fetches lists of comic series in which a specific character appears, with optional filters. See notes on individual parameters below.", response = Void.class, tags = {"docspublic",})
     @ApiResponses(value = {

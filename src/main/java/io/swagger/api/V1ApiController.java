@@ -5,14 +5,13 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-05-06T14:36:16.418+03:00")
 
-@Controller
-public class V1ApiController implements V1Api {
+//@Controller
+public class V1ApiController implements V1Api<Void> {
 
     public ResponseEntity<Void> getCharacterEventsCollection(@ApiParam(value = "The character ID.", required = true) @PathVariable("characterId") Integer characterId,
             @ApiParam(value = "Filter the event list by name.") @RequestParam(value = "name", required = false) String name,
