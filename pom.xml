@@ -28,11 +28,6 @@
             <version>3.5</version>
         </dependency>        
         <dependency>
-            <groupId>com.github.codingricky</groupId>
-            <artifactId>marvel-rest-client</artifactId>
-            <version>0.1.2-SNAPSHOT</version>
-        </dependency>        
-        <dependency>
             <groupId>com.karumi</groupId>
             <artifactId>marvelapiclient</artifactId>
             <version>1.0.0</version>

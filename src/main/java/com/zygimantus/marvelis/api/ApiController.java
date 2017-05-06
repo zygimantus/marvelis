@@ -1,15 +1,16 @@
 package com.zygimantus.marvelis.api;
 
-import com.github.codingricky.marvel.RestClient;
-import com.github.codingricky.marvel.model.MarvelCharacter;
-import com.github.codingricky.marvel.model.Result;
-import com.github.codingricky.marvel.parameter.CharacterParameters;
+import com.karumi.marvelapiclient.CharacterApiClient;
 import com.karumi.marvelapiclient.MarvelApiConfig;
+import com.karumi.marvelapiclient.MarvelApiException;
+import com.karumi.marvelapiclient.model.CharacterDto;
+import com.karumi.marvelapiclient.model.CharactersDto;
+import com.karumi.marvelapiclient.model.CharactersQuery;
+import com.karumi.marvelapiclient.model.MarvelResponse;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
 import com.zygimantus.marvelis.JsonResponse;
 import java.io.IOException;
-import java.util.List;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,18 +30,16 @@ public class ApiController extends AController<JsonResponse> {
     private static String PRIVATE_KEY;
 
     MarvelApiConfig marvelApiConfig;
-    RestClient restClient;
 
     protected final AppConfig appConfig = ConfigFactory.create(AppConfig.class);
 
     @Override
     protected void init() {
-//        marvelApiConfig = new MarvelApiConfig.Builder(PUBLIC_KEY, PRIVATE_KEY).debug().build();
 
         PUBLIC_KEY = appConfig.publicKey();
         PRIVATE_KEY = appConfig.privateKey();
 
-        restClient = new RestClient(PRIVATE_KEY, PUBLIC_KEY);
+        marvelApiConfig = new MarvelApiConfig.Builder(PUBLIC_KEY, PRIVATE_KEY).debug().build();
     }
 
     @Override
@@ -50,26 +49,22 @@ public class ApiController extends AController<JsonResponse> {
     }
 
     @RequestMapping("characters")
-    protected List<MarvelCharacter> characters() throws IOException {
+    protected MarvelResponse<CharactersDto> characters() throws IOException, MarvelApiException {
 
-        Result<MarvelCharacter> characters = restClient.getCharacters(new CharacterParameters());
+        CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
+        CharactersQuery charactersQuery = CharactersQuery.Builder.create().build();
+        MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
 
-        List<MarvelCharacter> list = characters.getData().getResults();
-
-        return list;
+        return marvelResponse;
     }
 
-    @RequestMapping("character/{id}")
-    protected MarvelCharacter character(@PathVariable("id") int id) throws IOException {
+    @RequestMapping("characters/{id}")
+    protected MarvelResponse<CharacterDto> character(@PathVariable("id") String id) throws IOException, MarvelApiException {
 
-//        CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
-//        CharactersQuery spider = CharactersQuery.Builder.create().withOffset(0).withLimit(10).build();
-//        MarvelResponse<CharactersDto> all = characterApiClient.getAll(spider);
-        Result<MarvelCharacter> character = restClient.getCharacter(id);
+        CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
+        MarvelResponse<CharacterDto> marvelResponse = characterApiClient.getCharacter(id);
 
-        MarvelCharacter one = character.getData().getResults().get(0);
-
-        return one;
+        return marvelResponse;
     }
 
     @ExceptionHandler(Exception.class)
