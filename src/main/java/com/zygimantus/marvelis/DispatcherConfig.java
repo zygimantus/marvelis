@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.zygimantus.marvelis")
+@ComponentScan(basePackages = {"com.zygimantus.marvelis", "io.swagger"})
 public class DispatcherConfig extends WebMvcConfigurerAdapter {
 
     @Override

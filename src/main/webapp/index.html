@@ -154,12 +154,24 @@
 
     function WithAjaxCtrl(DTOptionsBuilder, DTColumnBuilder) {
       var vm = this;
-      vm.dtOptions = DTOptionsBuilder.fromSource('templates/data.json')
+      vm.dtOptions = DTOptionsBuilder.newOptions()
+        .withOption('ajax', {
+          dataSrc: function(json) {
+            dataJson = {};
+            dataJson['recordsTotal'] = json.data.total;
+            dataJson['recordsFiltered'] = json.data.total;
+            dataJson['draw'] = 1;
+            // dataJson['data'] = json.data.results;
+            dataJson = json.data.results;
+            return dataJson;
+          },
+          url: 'test?limit=0&offset=20',
+        })
         .withPaginationType('full_numbers');
       vm.dtColumns = [
         DTColumnBuilder.newColumn('id').withTitle('ID'),
         DTColumnBuilder.newColumn('name').withTitle('Name'),
-        DTColumnBuilder.newColumn('modified').withTitle('odified').notVisible()
+        DTColumnBuilder.newColumn('modified').withTitle('modified').notVisible()
       ];
     }
   </script>
