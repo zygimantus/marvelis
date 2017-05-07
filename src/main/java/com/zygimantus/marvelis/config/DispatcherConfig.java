@@ -1,4 +1,4 @@
-package com.zygimantus.marvelis;
+package com.zygimantus.marvelis.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,9 @@ public class DispatcherConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+
+        // TODO delete later
         registry.addResourceHandler("/index.html").addResourceLocations("/index.html");
         registry.addResourceHandler("/js/**").addResourceLocations("/WEB-INF/js/");
         registry.addResourceHandler("/css/**").addResourceLocations("/WEB-INF/css/");

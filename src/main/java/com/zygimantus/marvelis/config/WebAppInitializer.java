@@ -1,16 +1,19 @@
-package com.zygimantus.marvelis;
+package com.zygimantus.marvelis.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
  *
+ * Replacement for most of the content of web.xml, sets up the root and the
+ * servlet context config.
+ *
  * @author Zygimantus
  */
-public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class<?>[]{RootContextConfig.class, TestConfiguration.class, AppSecurityConfig.class};
     }
 
     @Override
