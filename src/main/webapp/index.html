@@ -56,7 +56,6 @@
   <div ng-controller="TabsController" ng-cloak>
     <md-content id="tabsContent">
     </md-content>
-    <pre ng-bind-html="data"></pre>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -111,25 +110,30 @@
           // in the code. (Note: This is just an example, modifying the DOM from within
           // a controller is considered bad style.)
           $compile($("#tabsContent").html(template).contents())($scope);
+
+          this.character = {
+            id: ''
+          };
+
+          $scope.search = function() {
+            $http.get('characters/' + $scope.character.id).then(function(response) {
+              var str = JSON.stringify(response.data, undefined, 4);
+              $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
+            });
+          };
+
         }, function() {
           // An error has occurred
         });
 
-        this.character = {
-          id: ''
-        };
-
-        $scope.search = function() {
-          $http.get('character/' + $scope.character.id).then(function(response) {
-            var str = JSON.stringify(response.data, undefined, 4);
-            $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
-          });
-        };
-
       })
       .controller('WithAjaxCtrl', WithAjaxCtrl)
-      .config(function() {
-        console.log('configuring application');
+      .config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('default')
+          .primaryPalette('brown')
+          .accentPalette('red');
+          // .dark();
+          console.log('configuring application');
       })
       .run(["$rootScope", "$window", startup]);
 
@@ -158,8 +162,8 @@
         .withOption('ajax', {
           url: 'characters',
           type: 'post',
-          data: function (data) {
-              return JSON.stringify(data);
+          data: function(data) {
+            return JSON.stringify(data);
           },
           dataType: "json",
           contentType: 'application/json;charset=UTF-8'
@@ -178,7 +182,7 @@
       vm.dtColumns = [
         DTColumnBuilder.newColumn('id').withTitle('ID'),
         DTColumnBuilder.newColumn('name').withTitle('Name'),
-        DTColumnBuilder.newColumn('description').withTitle('Description'),
+        DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
         DTColumnBuilder.newColumn('modified').withTitle('Modified')
       ];
     }

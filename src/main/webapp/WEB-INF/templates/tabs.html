@@ -1,14 +1,7 @@
 <md-tabs md-dynamic-height md-border-bottom>
-  <md-tab label="one">
+  <md-tab label="Characters">
     <md-content class="md-padding">
-      <h1 class="md-display-2">Tab One</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis
-        nec, feugiat ultricies mi.</p>
-    </md-content>
-  </md-tab>
-  <md-tab label="table">
-    <md-content class="md-padding">
-      <h1 class="md-display-2">Tab Two</h1>
+      <h1 class="md-display-2">Characters</h1>
       <div ng-controller="WithAjaxCtrl as showCase">
           <table datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover"></table>
       </div>
@@ -28,6 +21,7 @@
           </form>
         </div>
       </md-content>
+      <pre ng-bind-html="data"></pre>
     </md-content>
   </md-tab>
 </md-tabs>
