@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,10 +50,11 @@ public class ApiController extends AController<JsonResponse> {
     }
 
     @RequestMapping("characters")
-    protected MarvelResponse<CharactersDto> characters() throws IOException, MarvelApiException {
+    protected MarvelResponse<CharactersDto> characters(@RequestParam("length") Integer limit,
+            @RequestParam("start") Integer offset) throws IOException, MarvelApiException {
 
         CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
-        CharactersQuery charactersQuery = CharactersQuery.Builder.create().build();
+        CharactersQuery charactersQuery = CharactersQuery.Builder.create().withLimit(limit).withOffset(offset).build();
         MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
 
         return marvelResponse;
