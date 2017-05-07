@@ -173,13 +173,13 @@
         .withOption('serverSide', true)
         .withOption('saveState', true)
         .withPaginationType('full_numbers')
-        .withOption('order', [1, 'desc'])
+        .withOption('order', [1, 'asc'])
         .withDisplayLength(10);
       vm.dtColumns = [
         DTColumnBuilder.newColumn('id').withTitle('ID'),
         DTColumnBuilder.newColumn('name').withTitle('Name'),
         DTColumnBuilder.newColumn('description').withTitle('Description'),
-        DTColumnBuilder.newColumn('modified').withTitle('modified').notVisible()
+        DTColumnBuilder.newColumn('modified').withTitle('Modified')
       ];
     }
   </script>

@@ -97,7 +97,7 @@ public class DataTablesRequest {
         this.columns = columns;
     }
 
-    protected static class Search {
+    public static class Search {
 
         /**
          * Global search value. To be applied to all columns which have
@@ -132,7 +132,7 @@ public class DataTablesRequest {
 
     }
 
-    protected static class Order {
+    public static class Order {
 
         /**
          * Column to which ordering should be applied. This is an index

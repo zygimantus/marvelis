@@ -7,6 +7,7 @@ import com.karumi.marvelapiclient.model.CharacterDto;
 import com.karumi.marvelapiclient.model.CharactersDto;
 import com.karumi.marvelapiclient.model.CharactersQuery;
 import com.karumi.marvelapiclient.model.MarvelResponse;
+import com.karumi.marvelapiclient.model.OrderBy;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
 import com.zygimantus.marvelis.DataTablesRequest;
@@ -53,6 +54,7 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
+    @Deprecated
     @RequestMapping(value = "characters", method = GET)
     protected MarvelResponse<CharactersDto> characters(
             @RequestParam("length") Integer limit,
@@ -61,17 +63,42 @@ public class ApiController extends AController<JsonResponse> {
     ) throws IOException, MarvelApiException {
 
         CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
-        CharactersQuery charactersQuery = CharactersQuery.Builder.create().withLimit(limit).withOffset(offset).build();
+        CharactersQuery charactersQuery = CharactersQuery.Builder.create()
+                .withLimit(limit)
+                .withOffset(offset)
+                .build();
+
         MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
 
         return marvelResponse;
     }
 
     @RequestMapping(value = "characters", method = POST)
-    protected MarvelResponse<CharactersDto> characters(@RequestBody DataTablesRequest dataTablesRequest) throws IOException, MarvelApiException {
+    protected MarvelResponse<CharactersDto> characters(@RequestBody DataTablesRequest dtr) throws IOException, MarvelApiException {
+
+        DataTablesRequest.Order order = dtr.getOrders().get(0);
+
+        OrderBy orderBy;
+
+        switch (order.getColumn()) {
+            case 1:
+                orderBy = OrderBy.NAME;
+                break;
+            case 3:
+                orderBy = OrderBy.MODIFIED;
+                break;
+            default:
+                orderBy = null;
+        }
 
         CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
-        CharactersQuery charactersQuery = CharactersQuery.Builder.create().withLimit(dataTablesRequest.getLength()).withOffset(dataTablesRequest.getStart()).build();
+        CharactersQuery charactersQuery = CharactersQuery.Builder.create()
+                .withLimit(dtr.getLength())
+                .withOffset(dtr.getStart())
+                .withNameStartWith(("".equals(dtr.getSearch().getValue())) ? null : dtr.getSearch().getValue())
+                .withOrderBy(orderBy, "asc".equals(order.getDir()))
+                .build();
+
         MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
 
         return marvelResponse;
