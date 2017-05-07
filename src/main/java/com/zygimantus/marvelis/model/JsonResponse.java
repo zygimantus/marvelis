@@ -1,4 +1,4 @@
-package com.zygimantus.marvelis;
+package com.zygimantus.marvelis.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
