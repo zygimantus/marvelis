@@ -1,5 +1,6 @@
 package com.zygimantus.marvelis.config;
 
+import com.zygimantus.marvelis.AjaxAuthenticationSuccessHandler;
 import com.zygimantus.marvelis.SecurityUserDetailsService;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 /**
  *
@@ -42,8 +44,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-//        CsrfTokenResponseHeaderBindingFilter csrfTokenFilter = new CsrfTokenResponseHeaderBindingFilter();
-//        http.addFilterAfter(csrfTokenFilter, CsrfFilter.class);
         http
                 .csrf().disable()
                 .authorizeRequests()
@@ -54,12 +54,12 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/index.html")
-//                .defaultSuccessUrl("/resources/calories-tracker.html")
+                .defaultSuccessUrl("/resources/index.html")
+                //                .defaultSuccessUrl("/resources/calories-tracker.html")
                 .loginProcessingUrl("/authenticate")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                //            .successHandler(new AjaxAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
+                .successHandler(new AjaxAuthenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler()))
                 .loginPage("/resources/public/login.html")
                 .and()
                 .httpBasic()

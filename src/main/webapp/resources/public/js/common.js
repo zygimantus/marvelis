@@ -41,8 +41,8 @@ angular.module('common', ['ngMessages'])
                 }
             })
             .then(function(response) {
-                if (response.status === 200) {
-                    window.location.replace('/marvelis/index.html');
+                if (response.data === 'ok') {
+                    window.location.replace('/marvelis/resources/index.html');
                 }
                 else {
                     $scope.vm.errorMessages = [];
