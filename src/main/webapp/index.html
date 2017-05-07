@@ -157,6 +157,12 @@
       vm.dtOptions = DTOptionsBuilder.newOptions()
         .withOption('ajax', {
           url: 'characters',
+          type: 'post',
+          data: function (data) {
+              return JSON.stringify(data);
+          },
+          dataType: "json",
+          contentType: 'application/json;charset=UTF-8'
         })
         .withDataProp(function(json) {
           json.recordsTotal = json.response.total;
@@ -167,10 +173,12 @@
         .withOption('serverSide', true)
         .withOption('saveState', true)
         .withPaginationType('full_numbers')
+        .withOption('order', [1, 'desc'])
         .withDisplayLength(10);
       vm.dtColumns = [
         DTColumnBuilder.newColumn('id').withTitle('ID'),
         DTColumnBuilder.newColumn('name').withTitle('Name'),
+        DTColumnBuilder.newColumn('description').withTitle('Description'),
         DTColumnBuilder.newColumn('modified').withTitle('modified').notVisible()
       ];
     }

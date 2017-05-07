@@ -9,13 +9,17 @@ import com.karumi.marvelapiclient.model.CharactersQuery;
 import com.karumi.marvelapiclient.model.MarvelResponse;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
+import com.zygimantus.marvelis.DataTablesRequest;
 import com.zygimantus.marvelis.JsonResponse;
 import java.io.IOException;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,12 +53,25 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
-    @RequestMapping("characters")
-    protected MarvelResponse<CharactersDto> characters(@RequestParam("length") Integer limit,
-            @RequestParam("start") Integer offset) throws IOException, MarvelApiException {
+    @RequestMapping(value = "characters", method = GET)
+    protected MarvelResponse<CharactersDto> characters(
+            @RequestParam("length") Integer limit,
+            @RequestParam("start") Integer offset,
+            @RequestParam(value = "order") String[][] order
+    ) throws IOException, MarvelApiException {
 
         CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
         CharactersQuery charactersQuery = CharactersQuery.Builder.create().withLimit(limit).withOffset(offset).build();
+        MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
+
+        return marvelResponse;
+    }
+
+    @RequestMapping(value = "characters", method = POST)
+    protected MarvelResponse<CharactersDto> characters(@RequestBody DataTablesRequest dataTablesRequest) throws IOException, MarvelApiException {
+
+        CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
+        CharactersQuery charactersQuery = CharactersQuery.Builder.create().withLimit(dataTablesRequest.getLength()).withOffset(dataTablesRequest.getStart()).build();
         MarvelResponse<CharactersDto> marvelResponse = characterApiClient.getAll(charactersQuery);
 
         return marvelResponse;
