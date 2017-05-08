@@ -71,6 +71,8 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
   <script src="js/angular-datatables.min.js"></script>
+  <script src="bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+  <script src="js/frontend-services.js"></script>
 
   <script>
     function MyDataService() {
@@ -92,13 +94,13 @@
       $rootScope.hasStarted = true;
     }
 
-    angular.module("MarvelisApp", ['ngMaterial', 'datatables'])
+    angular.module("MarvelisApp", ['ngMaterial', 'datatables', 'frontendServices', 'spring-security-csrf-token-interceptor'])
       .service("worldsService", [MyDataService])
       // .controller("demoController", ["worldsService", DemoController])
       .controller('MarvelController', function($scope) {
         // TODO
       })
-      .controller('TabsController', function($scope, $templateRequest, $sce, $compile, $http) {
+      .controller('TabsController', function($scope, $templateRequest, $sce, $compile, $http, UserService) {
         // Make sure that no bad URLs are fetched. You can omit this if your template URL is
         // not dynamic.
         var templateUrl = $sce.getTrustedResourceUrl('templates/tabs.html');
