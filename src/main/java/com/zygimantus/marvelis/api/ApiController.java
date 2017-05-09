@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Zygimantus
  */
 @RestController
-@RequestMapping
+@RequestMapping("api")
 public class ApiController extends AController<JsonResponse> {
 
     private static String PUBLIC_KEY;

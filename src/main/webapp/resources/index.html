@@ -118,7 +118,7 @@
           };
 
           $scope.search = function() {
-            $http.get('characters/' + $scope.character.id).then(function(response) {
+            $http.get('/marvelis/api/characters/' + $scope.character.id).then(function(response) {
               var str = JSON.stringify(response.data, undefined, 4);
               $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
             });
@@ -128,14 +128,47 @@
           // An error has occurred
         });
 
+        $scope.logout = function() {
+          UserService.logout();
+        }
+
       })
-      .controller('WithAjaxCtrl', WithAjaxCtrl)
+      .controller('WithAjaxCtrl', function(DTOptionsBuilder, DTColumnBuilder) {
+        var vm = this;
+        vm.dtOptions = DTOptionsBuilder.newOptions()
+          .withOption('ajax', {
+            url: '/marvelis/api/characters',
+            type: 'post',
+            data: function(data) {
+              return JSON.stringify(data);
+            },
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8'
+          })
+          .withDataProp(function(json) {
+            json.recordsTotal = json.response.total;
+            json.recordsFiltered = json.response.total;
+            return json.response.characters;
+          })
+          .withOption('processing', true)
+          .withOption('serverSide', true)
+          .withOption('saveState', true)
+          .withPaginationType('full_numbers')
+          .withOption('order', [1, 'asc'])
+          .withDisplayLength(10);
+        vm.dtColumns = [
+          DTColumnBuilder.newColumn('id').withTitle('ID'),
+          DTColumnBuilder.newColumn('name').withTitle('Name'),
+          DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
+          DTColumnBuilder.newColumn('modified').withTitle('Modified')
+        ];
+      })
       .config(function($mdThemingProvider) {
         $mdThemingProvider.theme('default')
           .primaryPalette('brown')
           .accentPalette('red');
-          // .dark();
-          console.log('configuring application');
+        // .dark();
+        console.log('configuring application');
       })
       .run(["$rootScope", "$window", startup]);
 
