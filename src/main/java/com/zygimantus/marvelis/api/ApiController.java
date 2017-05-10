@@ -54,6 +54,17 @@ public class ApiController extends AController<JsonResponse> {
         return new JsonResponse(HttpStatus.OK);
     }
 
+    @RequestMapping("settings/{public}/{private}")
+    public JsonResponse settings(@PathVariable("public") String publicKey, @PathVariable("private") String privateKey) {
+
+        appConfig.setProperty("publicKey", publicKey);
+        appConfig.setProperty("privateKey", privateKey);
+
+        JsonResponse jr = new JsonResponse(HttpStatus.OK);
+
+        return jr;
+    }
+
     @Deprecated
     @RequestMapping(value = "characters", method = GET)
     protected MarvelResponse<CharactersDto> characters(

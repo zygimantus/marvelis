@@ -43,15 +43,9 @@
 </head>
 
 <body ng-app="MarvelisApp" ng-cloak>
-  <!-- <div ng-controller="demoController as vm">
-    <ul>
-      <li ng-repeat="msg in vm.messages">{{ msg}}</li>
-    </ul>
-  </div> -->
   <div ng-controller="MarvelController">
     <!-- <p>{{data}}</p> -->
   </div>
-
 
   <div ng-controller="TabsController" ng-cloak>
     <md-content id="tabsContent">
@@ -117,6 +111,13 @@
             id: ''
           };
 
+          // TODO validation of keys...
+          $scope.save = function() {
+            $http.get('/marvelis/api/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
+              alert(response);
+            });
+          };
+
           $scope.search = function() {
             $http.get('/marvelis/api/characters/' + $scope.character.id).then(function(response) {
               var str = JSON.stringify(response.data, undefined, 4);
@@ -135,6 +136,7 @@
       })
       .controller('WithAjaxCtrl', function(DTOptionsBuilder, DTColumnBuilder) {
         var vm = this;
+        // FIXME still try to use csrf later...
         vm.dtOptions = DTOptionsBuilder.newOptions()
           .withOption('ajax', {
             url: '/marvelis/api/characters',
@@ -189,37 +191,6 @@
         }
         return '<span class="' + cls + '">' + match + '</span>';
       });
-    }
-
-    function WithAjaxCtrl(DTOptionsBuilder, DTColumnBuilder) {
-      var vm = this;
-      vm.dtOptions = DTOptionsBuilder.newOptions()
-        .withOption('ajax', {
-          url: 'characters',
-          type: 'post',
-          data: function(data) {
-            return JSON.stringify(data);
-          },
-          dataType: "json",
-          contentType: 'application/json;charset=UTF-8'
-        })
-        .withDataProp(function(json) {
-          json.recordsTotal = json.response.total;
-          json.recordsFiltered = json.response.total;
-          return json.response.characters;
-        })
-        .withOption('processing', true)
-        .withOption('serverSide', true)
-        .withOption('saveState', true)
-        .withPaginationType('full_numbers')
-        .withOption('order', [1, 'asc'])
-        .withDisplayLength(10);
-      vm.dtColumns = [
-        DTColumnBuilder.newColumn('id').withTitle('ID'),
-        DTColumnBuilder.newColumn('name').withTitle('Name'),
-        DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
-        DTColumnBuilder.newColumn('modified').withTitle('Modified')
-      ];
     }
   </script>
 
