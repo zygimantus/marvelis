@@ -59,6 +59,8 @@ public class ApiController extends AController<JsonResponse> {
 
         appConfig.setProperty("publicKey", publicKey);
         appConfig.setProperty("privateKey", privateKey);
+        
+        init();
 
         JsonResponse jr = new JsonResponse(HttpStatus.OK);
 
