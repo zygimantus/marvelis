@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 @Sources("classpath:app.properties")
 public interface AppConfig extends Mutable {
 
+    @DefaultValue("")
     String publicKey();
 
+    @DefaultValue("")
     String privateKey();
 
 }
