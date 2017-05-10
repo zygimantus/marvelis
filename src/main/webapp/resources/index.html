@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta name="Author" content="Zygimantus" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INDEX</title>
+  <style>
+    pre {
+      outline: 1px solid #ccc;
+      padding: 5px;
+      margin: 5px;
+    }
+
+    .string {
+      color: green;
+    }
+
+    .number {
+      color: darkorange;
+    }
+
+    .boolean {
+      color: blue;
+    }
+
+    .null {
+      color: magenta;
+    }
+
+    .key {
+      color: red;
+    }
+  </style>
+
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <link rel="stylesheet" href="http:////cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="css/angular-datatables.min.css">
+
+</head>
+
+<body ng-app="MarvelisApp" ng-cloak>
+  <div ng-controller="MarvelController">
+    <!-- <p>{{data}}</p> -->
+  </div>
+
+  <div ng-controller="TabsController" ng-cloak>
+    <md-content id="tabsContent">
+    </md-content>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+  <script src="js/angular-datatables.min.js"></script>
+  <script src="bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+  <script src="js/frontend-services.js"></script>
+
+  <script>
+    function MyDataService() {
+      return {
+        getWorlds: function getWorlds() {
+          return ["this world", "another world"];
+        }
+      };
+    }
+
+    function DemoController(worldsService) {
+      var vm = this;
+      vm.messages = worldsService.getWorlds().map(function(w) {
+        return "Hello, " + w + "!";
+      });
+    }
+
+    function startup($rootScope, $window) {
+      $rootScope.hasStarted = true;
+    }
+
+    angular.module("MarvelisApp", ['ngMaterial', 'datatables', 'frontendServices', 'spring-security-csrf-token-interceptor'])
+      .service("worldsService", [MyDataService])
+      // .controller("demoController", ["worldsService", DemoController])
+      .controller('MarvelController', function($scope) {
+        // TODO
+      })
+      .controller('TabsController', function($scope, $templateRequest, $sce, $compile, $http, UserService) {
+        // Make sure that no bad URLs are fetched. You can omit this if your template URL is
+        // not dynamic.
+        var templateUrl = $sce.getTrustedResourceUrl('templates/tabs.html');
+
+        $templateRequest(templateUrl).then(function(template) {
+          // template is the HTML template as a string
+
+          // Let's put it into an HTML element and parse any directives and expressions
+          // in the code. (Note: This is just an example, modifying the DOM from within
+          // a controller is considered bad style.)
+          $compile($("#tabsContent").html(template).contents())($scope);
+
+          this.character = {
+            id: ''
+          };
+
+          // TODO validation of keys...
+          $scope.save = function() {
+            $http.get('/marvelis/api/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
+              alert(response);
+            });
+          };
+
+          $scope.search = function() {
+            $http.get('/marvelis/api/characters/' + $scope.character.id).then(function(response) {
+              var str = JSON.stringify(response.data, undefined, 4);
+              $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
+            });
+          };
+
+        }, function() {
+          // An error has occurred
+        });
+
+        $scope.logout = function() {
+          UserService.logout();
+        }
+
+      })
+      .controller('WithAjaxCtrl', function(DTOptionsBuilder, DTColumnBuilder) {
+        var vm = this;
+        // FIXME still try to use csrf later...
+        vm.dtOptions = DTOptionsBuilder.newOptions()
+          .withOption('ajax', {
+            url: '/marvelis/api/characters',
+            type: 'post',
+            data: function(data) {
+              return JSON.stringify(data);
+            },
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8'
+          })
+          .withDataProp(function(json) {
+            json.recordsTotal = json.response.total;
+            json.recordsFiltered = json.response.total;
+            return json.response.characters;
+          })
+          .withOption('processing', true)
+          .withOption('serverSide', true)
+          .withOption('saveState', true)
+          .withPaginationType('full_numbers')
+          .withOption('order', [1, 'asc'])
+          .withDisplayLength(10);
+        vm.dtColumns = [
+          DTColumnBuilder.newColumn('id').withTitle('ID'),
+          DTColumnBuilder.newColumn('name').withTitle('Name'),
+          DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
+          DTColumnBuilder.newColumn('modified').withTitle('Modified')
+        ];
+      })
+      .config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('default')
+          .primaryPalette('brown')
+          .accentPalette('red');
+        // .dark();
+        console.log('configuring application');
+      })
+      .run(["$rootScope", "$window", startup]);
+
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'key';
+          } else {
+            cls = 'string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'boolean';
+        } else if (/null/.test(match)) {
+          cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+  </script>
+
+</body>
+
+</html>

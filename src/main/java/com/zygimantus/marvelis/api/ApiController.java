@@ -10,8 +10,8 @@ import com.karumi.marvelapiclient.model.MarvelResponse;
 import com.karumi.marvelapiclient.model.OrderBy;
 import com.zygimantus.marvelis.AController;
 import com.zygimantus.marvelis.AppConfig;
-import com.zygimantus.marvelis.DataTablesRequest;
-import com.zygimantus.marvelis.JsonResponse;
+import com.zygimantus.marvelis.model.DataTablesRequest;
+import com.zygimantus.marvelis.model.JsonResponse;
 import java.io.IOException;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Zygimantus
  */
 @RestController
-@RequestMapping
+@RequestMapping("api")
 public class ApiController extends AController<JsonResponse> {
 
     private static String PUBLIC_KEY;
@@ -52,6 +52,17 @@ public class ApiController extends AController<JsonResponse> {
     protected JsonResponse page() {
 
         return new JsonResponse(HttpStatus.OK);
+    }
+
+    @RequestMapping("settings/{public}/{private}")
+    public JsonResponse settings(@PathVariable("public") String publicKey, @PathVariable("private") String privateKey) {
+
+        appConfig.setProperty("publicKey", publicKey);
+        appConfig.setProperty("privateKey", privateKey);
+
+        JsonResponse jr = new JsonResponse(HttpStatus.OK);
+
+        return jr;
     }
 
     @Deprecated
