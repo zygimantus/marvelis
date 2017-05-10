@@ -1,0 +1,51 @@
+<md-tabs md-dynamic-height md-border-bottom>
+  <md-tab label="Characters">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Characters</h1>
+      <div ng-controller="WithAjaxCtrl as showCase">
+        <table datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover"></table>
+      </div>
+    </md-content>
+  </md-tab>
+  <md-tab label="search by id">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Search By Id</h1>
+      <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+        <div>
+          <form ng-submit="search()" name="searchForm">
+            <md-input-container>
+              <label>character_id</label>
+              <input ng-model="character.id">
+            </md-input-container>
+            <md-button ng-click="search()" class="md-primary btn btn-primary">search</md-button>
+          </form>
+        </div>
+      </md-content>
+      <pre ng-bind-html="data"></pre>
+    </md-content>
+  </md-tab>
+  <md-tab label="settings">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Settings</h1>
+      <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
+        <div>
+          <form ng-submit="save()" name="settingsForm">
+            <md-input-container>
+              <label>public_key</label>
+              <input ng-model="key.public">
+            </md-input-container>
+            <md-input-container>
+              <label>private_key</label>
+              <input ng-model="key.private">
+            </md-input-container>
+            <div>
+              <md-button ng-click="save()" class="md-primary btn btn-primary">save</md-button>
+            </div>
+          </form>
+        </div>
+      </md-content>
+    </md-content>
+  </md-tab>
+  <md-tab label="logout" ng-click="logout()">
+  </md-tab>
+</md-tabs>
