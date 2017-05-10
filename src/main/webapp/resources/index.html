@@ -113,13 +113,13 @@
 
           // TODO validation of keys...
           $scope.save = function() {
-            $http.get('/marvelis/api/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
+            $http.get('/api/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
               alert(response);
             });
           };
 
           $scope.search = function() {
-            $http.get('/marvelis/api/characters/' + $scope.character.id).then(function(response) {
+            $http.get('/api/characters/' + $scope.character.id).then(function(response) {
               var str = JSON.stringify(response.data, undefined, 4);
               $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
             });
@@ -139,7 +139,7 @@
         // FIXME still try to use csrf later...
         vm.dtOptions = DTOptionsBuilder.newOptions()
           .withOption('ajax', {
-            url: '/marvelis/api/characters',
+            url: '/api/characters',
             type: 'post',
             data: function(data) {
               return JSON.stringify(data);

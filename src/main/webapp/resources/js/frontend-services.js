@@ -114,7 +114,7 @@ angular.module('frontendServices', [])
             logout: function () {
                 $http({
                     method: 'POST',
-                    url: '/marvelis/logout'
+                    url: '/logout'
                 })
                 .then(function (response) {
                     if (response.status == 200) {
