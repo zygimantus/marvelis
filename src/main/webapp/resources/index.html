@@ -134,8 +134,10 @@
         }
 
       })
-      .controller('WithAjaxCtrl', function(DTOptionsBuilder, DTColumnBuilder) {
+      .controller('WithAjaxCtrl', function($scope, DTOptionsBuilder, DTColumnBuilder) {
         var vm = this;
+        vm.message = '';
+        vm.someClickHandler = someClickHandler;
         // FIXME still try to use csrf later...
         vm.dtOptions = DTOptionsBuilder.newOptions()
           .withOption('ajax', {
@@ -156,6 +158,7 @@
           .withOption('serverSide', true)
           .withOption('saveState', true)
           .withPaginationType('full_numbers')
+          .withOption('rowCallback', rowCallback)
           .withOption('order', [1, 'asc'])
           .withDisplayLength(10);
         vm.dtColumns = [
@@ -164,6 +167,18 @@
           DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
           DTColumnBuilder.newColumn('modified').withTitle('Modified')
         ];
+        function someClickHandler(info) {
+            vm.message = info.id + ' - ' + info.name;
+        }
+        function rowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            $('td', nRow).unbind('click');
+            $('td', nRow).bind('click', function() {
+                $scope.$apply(function() {
+                    vm.someClickHandler(aData);
+                });
+            });
+            return nRow;
+        }
       })
       .config(function($mdThemingProvider) {
         $mdThemingProvider.theme('default')

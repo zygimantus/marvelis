@@ -3,6 +3,8 @@
     <md-content class="md-padding">
       <h1 class="md-display-2">Characters</h1>
       <div ng-controller="WithAjaxCtrl as showCase">
+        <p class="text-danger">You clicked on: <strong>{{ showCase.message }}</strong></p>
+        <br>        
         <table datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover"></table>
       </div>
     </md-content>
