@@ -4,8 +4,8 @@
       <h1 class="md-display-2">Characters</h1>
       <div ng-controller="WithAjaxCtrl as showCase">
         <p class="text-danger">You clicked on: <strong>{{ showCase.message }}</strong></p>
-        <br>        
-        <table datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover"></table>
+        <br>
+        <table id="dataTable" datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover" dt-instance="showCase.dtInstance"></table>
       </div>
     </md-content>
   </md-tab>
@@ -14,7 +14,7 @@
       <h1 class="md-display-2">Search By Id</h1>
       <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
         <div>
-          <form ng-submit="search()" name="searchForm">
+          <form ng-submit="search(character.id)" name="searchForm">
             <md-input-container>
               <label>character_id</label>
               <input ng-model="character.id">

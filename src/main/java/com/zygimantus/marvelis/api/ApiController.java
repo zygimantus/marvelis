@@ -94,10 +94,10 @@ public class ApiController extends AController<JsonResponse> {
         OrderBy orderBy;
 
         switch (order.getColumn()) {
-            case 1:
+            case 2:
                 orderBy = OrderBy.NAME;
                 break;
-            case 3:
+            case 4:
                 orderBy = OrderBy.MODIFIED;
                 break;
             default:
