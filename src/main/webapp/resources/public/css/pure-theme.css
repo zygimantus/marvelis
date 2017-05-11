@@ -3,8 +3,12 @@
 generated using http://yui.github.io/skinbuilder/?mode=pure with #3b67a7 as primary color
 
 */
-body {
-    background-color: #ffffff;
+html {
+    background: url('https://static.pexels.com/photos/107956/pexels-photo-107956.jpeg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 /* from PURE buttons-core.css */
@@ -476,7 +480,7 @@ Forms Core
     padding: 0.3em 0;
     margin-bottom: 0.3em;
     font-size: 125%;
-    color: #262626;
+    color: red;
     border-bottom: 1px solid #ededed;
 }
 
@@ -995,4 +999,3 @@ striping:
 }
 
 /* end from menu-responsive.css ******************/
-
