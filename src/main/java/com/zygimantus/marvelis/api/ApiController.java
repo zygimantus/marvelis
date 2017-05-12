@@ -1,11 +1,15 @@
 package com.zygimantus.marvelis.api;
 
 import com.karumi.marvelapiclient.CharacterApiClient;
+import com.karumi.marvelapiclient.ComicApiClient;
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.karumi.marvelapiclient.MarvelApiException;
 import com.karumi.marvelapiclient.model.CharacterDto;
 import com.karumi.marvelapiclient.model.CharactersDto;
 import com.karumi.marvelapiclient.model.CharactersQuery;
+import com.karumi.marvelapiclient.model.ComicDto;
+import com.karumi.marvelapiclient.model.ComicsDto;
+import com.karumi.marvelapiclient.model.ComicsQuery;
 import com.karumi.marvelapiclient.model.MarvelResponse;
 import com.karumi.marvelapiclient.model.OrderBy;
 import com.zygimantus.marvelis.AController;
@@ -69,7 +73,7 @@ public class ApiController extends AController<JsonResponse> {
 
     @Deprecated
     @RequestMapping(value = "characters", method = GET)
-    protected MarvelResponse<CharactersDto> characters(
+    protected MarvelResponse characters(
             @RequestParam("length") Integer limit,
             @RequestParam("start") Integer offset,
             @RequestParam(value = "order") String[][] order
@@ -87,7 +91,7 @@ public class ApiController extends AController<JsonResponse> {
     }
 
     @RequestMapping(value = "characters", method = POST)
-    protected MarvelResponse<CharactersDto> characters(@RequestBody DataTablesRequest dtr) throws IOException, MarvelApiException {
+    protected MarvelResponse characters(@RequestBody DataTablesRequest dtr) throws IOException, MarvelApiException {
 
         DataTablesRequest.Order order = dtr.getOrders().get(0);
 
@@ -117,11 +121,51 @@ public class ApiController extends AController<JsonResponse> {
         return marvelResponse;
     }
 
+    @RequestMapping(value = "comics", method = POST)
+    protected MarvelResponse comics(@RequestBody DataTablesRequest dtr) throws IOException, MarvelApiException {
+
+        DataTablesRequest.Order order = dtr.getOrders().get(0);
+
+        OrderBy orderBy;
+
+        switch (order.getColumn()) {
+            case 2:
+                orderBy = null;
+                break;
+            case 4:
+                orderBy = OrderBy.MODIFIED;
+                break;
+            default:
+                orderBy = null;
+        }
+
+        ComicApiClient comicApiClient = new ComicApiClient(marvelApiConfig);
+        ComicsQuery comicQuery = ComicsQuery.Builder.create()
+                .withLimit(dtr.getLength())
+                .withOffset(dtr.getStart())
+                .withTitleStartsWith(("".equals(dtr.getSearch().getValue())) ? null : dtr.getSearch().getValue())
+                .withOrderBy(orderBy, "asc".equals(order.getDir()))
+                .build();
+
+        MarvelResponse<ComicsDto> marvelResponse = comicApiClient.getAll(comicQuery);
+
+        return marvelResponse;
+    }
+
     @RequestMapping("characters/{id}")
-    protected MarvelResponse<CharacterDto> character(@PathVariable("id") String id) throws IOException, MarvelApiException {
+    protected MarvelResponse character(@PathVariable("id") String id) throws IOException, MarvelApiException {
 
         CharacterApiClient characterApiClient = new CharacterApiClient(marvelApiConfig);
         MarvelResponse<CharacterDto> marvelResponse = characterApiClient.getCharacter(id);
+
+        return marvelResponse;
+    }
+
+    @RequestMapping("comics/{id}")
+    protected MarvelResponse comic(@PathVariable("id") String id) throws IOException, MarvelApiException {
+
+        ComicApiClient comicApiClient = new ComicApiClient(marvelApiConfig);
+        MarvelResponse<ComicDto> marvelResponse = comicApiClient.getComic(id);
 
         return marvelResponse;
     }

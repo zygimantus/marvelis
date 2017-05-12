@@ -2,10 +2,20 @@
   <md-tab label="Characters">
     <md-content class="md-padding">
       <h1 class="md-display-2">Characters</h1>
-      <div ng-controller="WithAjaxCtrl as showCase">
-        <p class="text-danger">You clicked on: <strong>{{ showCase.message }}</strong></p>
+      <div ng-controller="CharactersController as charContr">
+        <p class="text-danger">You clicked on: <strong>{{ charContr.message }}</strong></p>
         <br>
-        <table id="dataTable" datatable="" dt-options="showCase.dtOptions" dt-columns="showCase.dtColumns" class="row-border hover" dt-instance="showCase.dtInstance"></table>
+        <table id="dataTableChar" datatable="" dt-options="charContr.dtOptions" dt-columns="charContr.dtColumns" class="row-border hover" dt-instance="charContr.dtInstance"></table>
+      </div>
+    </md-content>
+  </md-tab>
+  <md-tab label="Comics">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Comics</h1>
+      <div ng-controller="ComicsController as comContr">
+        <p class="text-danger">You clicked on: <strong>{{ comContr.message }}</strong></p>
+        <br>
+        <table id="dataTableComic" datatable="" dt-options="comContr.dtOptions" dt-columns="comContr.dtColumns" class="row-border hover" dt-instance="comContr.dtInstance"></table>
       </div>
     </md-content>
   </md-tab>
