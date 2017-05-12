@@ -23,6 +23,11 @@
     
     <dependencies>
         <dependency>
+            <groupId>com.karumi</groupId> 
+            <artifactId>marvelapiclient</artifactId> 
+            <version>1.0.1</version> 
+        </dependency> 
+        <dependency>             
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>2.4.0</version>
