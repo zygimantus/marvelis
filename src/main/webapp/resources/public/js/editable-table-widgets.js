@@ -6,7 +6,7 @@ angular.module('editableTableWidgets', [])
             link: function(scope, element, attrs) {
                 scope.extraStyles = attrs.extraStyles;
             },
-            templateUrl: '/marvelis/resources/public/partials/error-messages.html'
+            templateUrl: '/resources/public/partials/error-messages.html'
         }
     })
     .directive('ttDatePicker', ['$timeout', function($timeout) {
@@ -92,7 +92,7 @@ angular.module('editableTableWidgets', [])
             },
             transclude:true,
             replace:true,
-            templateUrl: '/marvelis/resources/partials/editable-cell.html',
+            templateUrl: '/resources/partials/editable-cell.html',
             controller: ['$scope', function($scope) {
 
                 $scope.cellState = {

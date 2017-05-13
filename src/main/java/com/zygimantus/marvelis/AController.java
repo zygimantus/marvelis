@@ -3,6 +3,9 @@ package com.zygimantus.marvelis;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.aeonbits.owner.ConfigFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -19,7 +22,10 @@ public abstract class AController<T> implements ApplicationContextAware {
 
     protected static ApplicationContext context;
 
-//    protected final Logger LOGGER = LogManager.getLogger(this.getClass());
+    protected final Logger LOGGER = LogManager.getLogger(this.getClass());
+
+    protected final AppConfig appConfig = ConfigFactory.create(AppConfig.class);
+
     @Autowired
     protected HttpServletRequest request;
 

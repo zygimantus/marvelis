@@ -166,7 +166,7 @@ public class DataTablesRequest {
 
     }
 
-    protected static class Column {
+    public static class Column {
 
         /**
          * Column's data source, as defined by columns.data.

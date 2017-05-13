@@ -33,7 +33,7 @@ angular.module('common', ['ngMessages'])
 
             $http({
                 method: 'POST',
-                url: '/marvelis/authenticate',
+                url: '/authenticate',
                 data: postData,
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -42,7 +42,7 @@ angular.module('common', ['ngMessages'])
             })
             .then(function(response) {
                 if (response.data === 'ok') {
-                    window.location.replace('/marvelis/resources/index.html');
+                    window.location.replace('/resources/index.html');
                 }
                 else {
                     $scope.vm.errorMessages = [];
