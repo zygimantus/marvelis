@@ -1,6 +1,12 @@
 
 
 angular.module('frontendServices', [])
+    // .service("worldsService", [MyDataService])
+    .service('ComicsService', function($http, $q, DTOptionsBuilder, DTColumnBuilder) {
+        this.init = function() {
+
+        }
+    })
     .service('MealService', ['$http', '$q', function($http, $q) {
         return {
             searchMeals: function(fromDate, fromTime, toDate, toTime, pageNumber) {

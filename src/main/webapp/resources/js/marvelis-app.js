@@ -1,10 +1,7 @@
 angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', 'spring-security-csrf-token-interceptor'])
   .service("worldsService", [MyDataService])
   // .controller("demoController", ["worldsService", DemoController])
-  .controller('MarvelController', function($scope) {
-    // TODO
-  })
-  .controller('TabsController', function($scope, $templateRequest, $sce, $compile, $http, UserService) {
+  .controller('MarvelController', function($scope, $templateRequest, $sce, $compile, $http, UserService) {
     // Make sure that no bad URLs are fetched. You can omit this if your template URL is
     // not dynamic.
     var templateUrl = $sce.getTrustedResourceUrl('templates/tabs.html');
@@ -143,7 +140,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       return nRow;
     }
   })
-  .controller('ComicsController', function($scope, $http, DTOptionsBuilder, DTColumnBuilder) {
+  .controller('ComicsController', function($scope, $http, DTOptionsBuilder, DTColumnBuilder, ComicsService) {
     var vm = this;
     vm.message = '';
     vm.someClickHandler = someClickHandler;
@@ -185,8 +182,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       vm.dtInstance = dtInstance;
     }
 
-    // Add event listener for opening and closing details
-    $('#dataTableComic').on('click', 'td.details-control', function() {
+    $('#dataTableChar').on('click', 'td.details-control', function() {
       var tr = $(this).closest('tr');
       var row = vm.dtInstance.DataTable.row(tr);
 
