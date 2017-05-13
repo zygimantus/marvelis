@@ -4,6 +4,7 @@ import com.karumi.marvelapiclient.CharacterApiClient;
 import com.karumi.marvelapiclient.ComicApiClient;
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.karumi.marvelapiclient.MarvelApiException;
+import com.karumi.marvelapiclient.SeriesApiClient;
 import com.karumi.marvelapiclient.model.CharacterDto;
 import com.karumi.marvelapiclient.model.CharactersDto;
 import com.karumi.marvelapiclient.model.CharactersQuery;
@@ -13,6 +14,8 @@ import com.karumi.marvelapiclient.model.ComicsQuery;
 import com.karumi.marvelapiclient.model.Format;
 import com.karumi.marvelapiclient.model.MarvelResponse;
 import com.karumi.marvelapiclient.model.OrderBy;
+import com.karumi.marvelapiclient.model.SeriesCollectionDto;
+import com.karumi.marvelapiclient.model.SeriesQuery;
 import com.zygimantus.marvelis.model.DataTablesRequest;
 import com.zygimantus.marvelis.model.JsonResponse;
 import java.io.IOException;
@@ -171,6 +174,57 @@ public class MarvelApiController extends ApiController<MarvelResponse> {
         return marvelResponse;
     }
 
+    @RequestMapping(value = "series", method = POST)
+    protected MarvelResponse series(@RequestBody DataTablesRequest dtr) throws IOException, MarvelApiException {
+
+        DataTablesRequest.Order order = dtr.getOrders().get(0);
+
+        OrderBy orderBy;
+
+        switch (order.getColumn()) {
+            case 2:
+                orderBy = null;
+                break;
+            case 4:
+                orderBy = OrderBy.MODIFIED;
+                break;
+            default:
+                orderBy = null;
+        }
+
+        // search by column values
+        Map<String, String> map = new HashMap<>();
+        List<DataTablesRequest.Column> columns = dtr.getColumns();
+        for (DataTablesRequest.Column column : columns) {
+            if (!column.getSearch().getValue().equals("")) {
+                map.put(column.getData(), column.getSearch().getValue());
+            }
+        }
+
+        SeriesApiClient seriesApiClient = new SeriesApiClient(marvelApiConfig);
+        SeriesQuery.Builder builder = SeriesQuery.Builder.create();
+
+        builder.withLimit(dtr.getLength())
+                .withOffset(dtr.getStart())
+                .withTitleStartsWith(("".equals(dtr.getSearch().getValue())) ? null : dtr.getSearch().getValue())
+                .withOrderBy(orderBy, "asc".equals(order.getDir()));
+
+        // TODO search by type
+        map.entrySet().forEach((entry) -> {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (key.equals("type")) {
+                builder.withSeriesType(SeriesQuery.SeriesType.valueOf(value));
+            }
+        });
+
+        SeriesQuery seriesQuery = builder.build();
+
+        MarvelResponse<SeriesCollectionDto> marvelResponse = seriesApiClient.getAll(seriesQuery);
+
+        return marvelResponse;
+    }
+
     @RequestMapping("characters/{id}")
     protected MarvelResponse character(@PathVariable("id") String id) throws IOException, MarvelApiException {
 
@@ -193,6 +247,14 @@ public class MarvelApiController extends ApiController<MarvelResponse> {
     protected Format[] comicsFormats() throws IOException, MarvelApiException {
 
         Format[] formats = Format.values();
+
+        return formats;
+    }
+
+    @RequestMapping(value = "series/type", method = GET)
+    protected SeriesQuery.SeriesType[] seriesType() throws IOException, MarvelApiException {
+
+        SeriesQuery.SeriesType[] formats = SeriesQuery.SeriesType.values();
 
         return formats;
     }

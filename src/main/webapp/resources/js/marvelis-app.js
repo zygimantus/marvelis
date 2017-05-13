@@ -241,6 +241,107 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       return nRow;
     }
   })
+  .controller('SeriesController', function($scope, $http, DTOptionsBuilder, DTColumnBuilder, ComicsService) {
+    var vm = this;
+    vm.message = '';
+    vm.someClickHandler = someClickHandler;
+    // FIXME still try to use csrf later...
+    vm.dtOptions = DTOptionsBuilder.newOptions()
+      .withOption('ajax', {
+        url: '/api/marvel/series',
+        type: 'post',
+        data: function(data) {
+          return JSON.stringify(data);
+        },
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8'
+      })
+      .withDataProp(function(json) {
+        json.recordsTotal = json.response.total;
+        json.recordsFiltered = json.response.total;
+        return json.response.series;
+      })
+      .withOption('processing', true)
+      .withOption('serverSide', true)
+      .withOption('saveState', true)
+      .withPaginationType('full_numbers')
+      .withOption('rowCallback', rowCallback)
+      .withOption('order', [2, 'asc'])
+      .withDisplayLength(10);
+    vm.dtColumns = [
+      DTColumnBuilder.newColumn(null).withClass('details-control').withOption('defaultContent', ''),
+      DTColumnBuilder.newColumn('id').withTitle('ID'),
+      DTColumnBuilder.newColumn('title').withTitle('Title'),
+      DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
+      DTColumnBuilder.newColumn('modified').withTitle('Modified'),
+      // DTColumnBuilder.newColumn('type').withTitle('Type')
+    ];
+
+    vm.dtInstance = {};
+    vm.dtInstanceCallback = dtInstanceCallback;
+
+    function dtInstanceCallback(dtInstance) {
+      vm.dtInstance = dtInstance;
+    }
+
+    $('#dataTableComic').on('click', 'td.details-control', function() {
+      var tr = $(this).closest('tr');
+      var row = vm.dtInstance.DataTable.row(tr);
+
+      if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+      } else {
+        // Open this row
+        fillRow(row);
+        // row.child(format(row.data())).show();
+        tr.addClass('shown');
+      }
+      // modification after creation
+      var imagesTable = $('#images').children()[1].firstChild;
+
+
+    });
+
+    function fillRow(row) {
+      function createTable(data) {
+        var table = $('<table class="table"></table>');
+        $.each(data, function(i, list) {
+
+          /* filling table */
+          var $tr = $('<tr id="' + i + '">');
+          $tr.append($('<td>').text(i));
+
+          if (typeof list == 'string' || typeof list == 'number') {
+            $tr.append($('<td>').text(list));
+          } else {
+            $tr.append($('<td>').append(createTable(list)));
+          }
+          table.append($tr);
+        });
+        return table;
+      }
+
+      $http.get('/api/marvel/series/' + row.data().id).then(function(data) {
+        row.child(createTable(data.data.response)).show();
+      });
+    }
+
+    function someClickHandler(info) {
+      vm.message = info.id + ' - ' + info.name;
+    }
+
+    function rowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+      $('td', nRow).unbind('click');
+      $('td', nRow).bind('click', function() {
+        $scope.$apply(function() {
+          vm.someClickHandler(aData);
+        });
+      });
+      return nRow;
+    }
+  })
   .config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
       .primaryPalette('brown')
@@ -255,10 +356,10 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       $('#dataTableComic tfoot th').each( function () {
           var title = $(this).text();
           var value = $(this);
-          if (title === "Format") {
+          if (title === "Type") {
             var option = $('<select id="selectType"></select>');
             value.html(option);
-            $.getJSON('../api/marvel/comics/formats', function(data) {
+            $.getJSON('../api/marvel/series/type', function(data) {
               Object.keys(data).forEach(function(key) {
                 option.append('<option value=' + data[key] + '>' + data[key] + '</option>');
               });

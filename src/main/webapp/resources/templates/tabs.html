@@ -9,6 +9,27 @@
       </div>
     </md-content>
   </md-tab>
+  <md-tab label="Series">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Series</h1>
+      <div ng-controller="SeriesController as serContr">
+        <p class="text-danger">You clicked on: <strong>{{ serContr.message }}</strong></p>
+        <br>
+        <table id="dataTableChar" datatable="" dt-options="serContr.dtOptions" dt-columns="serContr.dtColumns" class="row-border hover" dt-instance="serContr.dtInstance">
+          <tfoot>
+            <tr>
+              <th>Details</th>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Modified</th>
+              <!-- <th>Type</th> -->
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </md-content>
+  </md-tab>
   <md-tab label="Comics">
     <md-content class="md-padding">
       <h1 class="md-display-2">Comics</h1>
