@@ -17,6 +17,9 @@ import com.zygimantus.marvelis.AppConfig;
 import com.zygimantus.marvelis.model.DataTablesRequest;
 import com.zygimantus.marvelis.model.JsonResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.aeonbits.owner.ConfigFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -139,13 +142,24 @@ public class ApiController extends AController<JsonResponse> {
                 orderBy = null;
         }
 
+        // search by column values
+        Map<String, String> map = new HashMap<>();
+        List<DataTablesRequest.Column> columns = dtr.getColumns();
+        for (DataTablesRequest.Column column : columns) {
+            if (!column.getSearch().getValue().equals("")) {
+                map.put(column.getData(), column.getSearch().getValue());
+            }
+        }
+
         ComicApiClient comicApiClient = new ComicApiClient(marvelApiConfig);
-        ComicsQuery comicQuery = ComicsQuery.Builder.create()
-                .withLimit(dtr.getLength())
+        ComicsQuery.Builder builder = ComicsQuery.Builder.create();
+        
+        builder.withLimit(dtr.getLength())
                 .withOffset(dtr.getStart())
                 .withTitleStartsWith(("".equals(dtr.getSearch().getValue())) ? null : dtr.getSearch().getValue())
-                .withOrderBy(orderBy, "asc".equals(order.getDir()))
-                .build();
+                .withOrderBy(orderBy, "asc".equals(order.getDir()));
+
+        ComicsQuery comicQuery = builder.build();
 
         MarvelResponse<ComicsDto> marvelResponse = comicApiClient.getAll(comicQuery);
 

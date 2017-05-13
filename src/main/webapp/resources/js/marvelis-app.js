@@ -182,7 +182,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       vm.dtInstance = dtInstance;
     }
 
-    $('#dataTableChar').on('click', 'td.details-control', function() {
+    $('#dataTableComic').on('click', 'td.details-control', function() {
       var tr = $(this).closest('tr');
       var row = vm.dtInstance.DataTable.row(tr);
 
@@ -246,3 +246,27 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
     console.log('configuring application');
   })
   .run(["$rootScope", "$window", startup]);
+
+  $(document).ready(function() {
+      // Setup - add a text input to each footer cell
+      $('#dataTableComic tfoot th').each( function () {
+          var title = $(this).text();
+          $(this).html( '<input type="text" class="inputForSearch" id="search_'+title+'" />' );
+      } );
+
+      // DataTable
+      var table = $('#dataTableComic').DataTable();
+
+      // Apply the search
+      table.columns().every( function () {
+          var that = this;
+
+          $( 'input', this.footer() ).on( 'keyup change', function () {
+              if ( that.search() !== this.value ) {
+                  that
+                      .search( this.value )
+                      .draw();
+              }
+          } );
+      } );
+  } );

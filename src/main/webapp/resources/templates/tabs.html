@@ -15,7 +15,17 @@
       <div ng-controller="ComicsController as comContr">
         <p class="text-danger">You clicked on: <strong>{{ comContr.message }}</strong></p>
         <br>
-        <table id="dataTableComic" datatable="" dt-options="comContr.dtOptions" dt-columns="comContr.dtColumns" class="row-border hover" dt-instance="comContr.dtInstance"></table>
+        <table id="dataTableComic" datatable="" dt-options="comContr.dtOptions" dt-columns="comContr.dtColumns" class="row-border hover" dt-instance="comContr.dtInstance">
+          <tfoot>
+            <tr>
+              <th></th>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Modified</th>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </md-content>
   </md-tab>
