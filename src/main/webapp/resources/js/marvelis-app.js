@@ -20,13 +20,13 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
 
       // TODO validation of keys...
       $scope.save = function() {
-        $http.get('/api/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
+        $http.get('/api/marvel/settings/' + $scope.key.public + '/' + $scope.key.private).then(function(response) {
           alert(response);
         });
       };
 
       $scope.search = function(characterId) {
-        $http.get('/api/characters/' + characterId).then(function(response) {
+        $http.get('/api/marvel/characters/' + characterId).then(function(response) {
           var str = JSON.stringify(response.data, undefined, 4);
           $scope.data = $sce.trustAsHtml(syntaxHighlight(str));
         });
@@ -48,7 +48,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
     // FIXME still try to use csrf later...
     vm.dtOptions = DTOptionsBuilder.newOptions()
       .withOption('ajax', {
-        url: '/api/characters',
+        url: '/api/marvel/characters',
         type: 'post',
         data: function(data) {
           return JSON.stringify(data);
@@ -121,7 +121,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
         return table;
       }
 
-      $http.get('/api/characters/' + row.data().id).then(function(data) {
+      $http.get('/api/marvel/characters/' + row.data().id).then(function(data) {
         row.child(createTable(data.data.response)).show();
       });
     }
@@ -147,7 +147,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
     // FIXME still try to use csrf later...
     vm.dtOptions = DTOptionsBuilder.newOptions()
       .withOption('ajax', {
-        url: '/api/comics',
+        url: '/api/marvel/comics',
         type: 'post',
         data: function(data) {
           return JSON.stringify(data);
@@ -172,7 +172,8 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       DTColumnBuilder.newColumn('id').withTitle('ID'),
       DTColumnBuilder.newColumn('title').withTitle('Title'),
       DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
-      DTColumnBuilder.newColumn('modified').withTitle('Modified')
+      DTColumnBuilder.newColumn('modified').withTitle('Modified'),
+      DTColumnBuilder.newColumn('format').withTitle('Format')
     ];
 
     vm.dtInstance = {};
@@ -197,6 +198,8 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
         tr.addClass('shown');
       }
       // modification after creation
+      var imagesTable = $('#images').children()[1].firstChild;
+
 
     });
 
@@ -219,7 +222,7 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
         return table;
       }
 
-      $http.get('/api/comics/' + row.data().id).then(function(data) {
+      $http.get('/api/marvel/comics/' + row.data().id).then(function(data) {
         row.child(createTable(data.data.response)).show();
       });
     }
@@ -251,7 +254,20 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
       // Setup - add a text input to each footer cell
       $('#dataTableComic tfoot th').each( function () {
           var title = $(this).text();
-          $(this).html( '<input type="text" class="inputForSearch" id="search_'+title+'" />' );
+          var value = $(this);
+          if (title === "Format") {
+            var option = $('<select id="selectType"></select>');
+            value.html(option);
+            $.getJSON('../api/marvel/comics/formats', function(data) {
+              Object.keys(data).forEach(function(key) {
+                option.append('<option value=' + data[key] + '>' + data[key] + '</option>');
+              });
+            });
+          } else if (title === "Details") {
+            // Do nothing
+          } else {
+            $(this).html( '<input type="text" class="inputForSearch" id="search_'+title+'" />' );
+          }
       } );
 
       // DataTable
@@ -262,6 +278,13 @@ angular.module("marvelisApp", ['ngMaterial', 'datatables', 'frontendServices', '
           var that = this;
 
           $( 'input', this.footer() ).on( 'keyup change', function () {
+              if ( that.search() !== this.value ) {
+                  that
+                      .search( this.value )
+                      .draw();
+              }
+          } );
+          $( '#selectType', this.footer() ).on( 'change', function () {
               if ( that.search() !== this.value ) {
                   that
                       .search( this.value )
