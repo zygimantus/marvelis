@@ -9,27 +9,6 @@
       </div>
     </md-content>
   </md-tab>
-  <md-tab label="Series">
-    <md-content class="md-padding">
-      <h1 class="md-display-2">Series</h1>
-      <div ng-controller="SeriesController as serContr">
-        <p class="text-danger">You clicked on: <strong>{{ serContr.message }}</strong></p>
-        <br>
-        <table id="series" class="datatable" datatable="" dt-options="serContr.dtOptions" dt-columns="serContr.dtColumns" class="row-border hover" dt-instance="serContr.dtInstance">
-          <tfoot>
-            <tr>
-              <th>Details</th>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Modified</th>
-              <!-- <th>Type</th> -->
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </md-content>
-  </md-tab>
   <md-tab label="Comics">
     <md-content class="md-padding">
       <h1 class="md-display-2">Comics</h1>
@@ -45,6 +24,28 @@
               <th>Description</th>
               <th>Modified</th>
               <th>Format</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </md-content>
+  </md-tab>
+  <md-tab label="Series">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Series</h1>
+      <div ng-controller="SeriesController as serContr">
+        <p class="text-danger">You clicked on: <strong>{{ serContr.message }}</strong></p>
+        <br>
+        <table id="series" class="datatable" datatable="" dt-options="serContr.dtOptions" dt-columns="serContr.dtColumns" class="row-border hover" dt-instance="serContr.dtInstance">
+          <tfoot>
+            <tr>
+              <th>Details</th>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Issue Number</th>
+              <th>Page Count</th>
+              <th>Modified</th>
+              <!-- <th>Type</th> -->
             </tr>
           </tfoot>
         </table>

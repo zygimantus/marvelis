@@ -87,7 +87,7 @@ public class MarvelApiConsumer extends WsConsumer {
             case 2:
                 orderBy = null;
                 break;
-            case 4:
+            case 5:
                 orderBy = OrderBy.MODIFIED;
                 break;
             default:

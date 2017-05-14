@@ -47,7 +47,7 @@ function MarvelController($scope, $templateRequest, $sce, $compile, $http, UserS
 
 }
 
-function CharactersController($scope, $http, $sce, $mdDialog, DTOptionsBuilder, DTColumnBuilder, UtilService) {
+function CharactersController($scope, $compile, $http, $sce, $mdDialog, DTOptionsBuilder, DTColumnBuilder, UtilService) {
   var vm = this;
   vm.message = '';
   vm.someClickHandler = someClickHandler;
@@ -72,62 +72,63 @@ function CharactersController($scope, $http, $sce, $mdDialog, DTOptionsBuilder, 
     .withOption('saveState', true)
     .withPaginationType('full_numbers')
     .withOption('order', [2, 'asc'])
+    .withOption('createdRow', createdRow)
     .withOption('rowCallback', rowCallback)
-    .withOption('drawCallback', function(settings) {
-      console.log("DataTable drawCallback");
-
-      var characterId;
-      var data;
-
-      showAdvanced = function(ev, id) {
-        characterId = id;
-        $http.get('/api/marvel/characters/' + characterId).then(function(response) {
-          data = response.data.response;
-
-          $mdDialog.show({
-              controller: DialogController,
-              templateUrl: 'templates/dialogChar.html',
-              parent: angular.element(document.body),
-              // targetEvent: ev,
-              clickOutsideToClose: true,
-              fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-            })
-            .then(function(answer) {
-              $scope.status = 'You said the information was "' + answer + '".';
-            }, function() {
-              $scope.status = 'You cancelled the dialog.';
-            });
-        });
-      };
-
-      function DialogController($scope, $mdDialog) {
-        $scope.data = data;
-        $scope.hide = function() {
-          $mdDialog.hide();
-        };
-        $scope.cancel = function() {
-          $mdDialog.cancel();
-        };
-        $scope.answer = function(answer) {
-          $mdDialog.hide(answer);
-        };
-      }
-    })
+    // .withOption('drawCallback', )
     .withDisplayLength(10);
   vm.dtColumns = [
-    DTColumnBuilder.newColumn(null)
-    // .withClass('details-control')
-    .withOption('defaultContent', '')
-    .renderWith(function(data, type, full, meta) {
-      return '<md-button class="md-primary btn btn-primary" onclick="showAdvanced(event,' + data.id + ')">Show</md-button>';
-      // return '<md-button class="md-primary btn btn-primary" onclick="alert(\'aa\')">Show</md-button>';
-      // return '<md-button class="md-primary btn btn-primary" ng-click="$scope.charContr.showAdvanced($event)">Show</md-button>';
-    }),
+    DTColumnBuilder.newColumn(null).withOption('defaultContent', '').renderWith(actionsHtml),
     DTColumnBuilder.newColumn('id').withTitle('ID'),
     DTColumnBuilder.newColumn('name').withTitle('Name'),
     DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
     DTColumnBuilder.newColumn('modified').withTitle('Modified')
   ];
+
+    showCharInfo = function(ev, id) {
+      var characterId = id;
+      var data;
+      $http.get('/api/marvel/characters/' + characterId).then(function(response) {
+        data = response.data.response;
+
+        $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'templates/dialogChar.html',
+            parent: angular.element(document.body),
+            // targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+          })
+          .then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+      });
+
+    function DialogController($scope, $mdDialog) {
+      $scope.data = data;
+      $scope.hide = function() {
+        $mdDialog.hide();
+      };
+      $scope.cancel = function() {
+        $mdDialog.cancel();
+      };
+      $scope.answer = function(answer) {
+        $mdDialog.hide(answer);
+      };
+    }
+  }
+
+  function createdRow(row, data, dataIndex) {
+      // Recompiling so we can bind Angular directive to the DT
+      $compile(angular.element(row).contents())($scope);
+  }
+
+  function actionsHtml(data, type, full, meta) {
+    return '<md-button class="md-primary md-raised" onclick="showCharInfo(event,' + data.id + ')">Show</md-button>';
+    // return '<md-button class="md-primary btn btn-primary" onclick="alert(\'aa\')">Show</md-button>';
+    // return '<md-button class="md-primary btn btn-primary" ng-click="$scope.charContr.showAdvanced($event)">Show</md-button>';
+  }
 
   $scope.dtInstanceCallback = function(instance) {
     $scope.dtInstance = instance;
@@ -148,7 +149,7 @@ function CharactersController($scope, $http, $sce, $mdDialog, DTOptionsBuilder, 
   }
 }
 
-function ComicsController($scope, $http, DTOptionsBuilder, DTColumnBuilder, ComicsService, UtilService) {
+function ComicsController($scope, $compile, $http, $sce, $mdDialog, DTOptionsBuilder, DTColumnBuilder, UtilService) {
   var vm = this;
   vm.message = '';
   vm.someClickHandler = someClickHandler;
@@ -176,19 +177,63 @@ function ComicsController($scope, $http, DTOptionsBuilder, DTColumnBuilder, Comi
     .withOption('order', [2, 'asc'])
     .withDisplayLength(10);
   vm.dtColumns = [
-    DTColumnBuilder.newColumn(null).withClass('details-control').withOption('defaultContent', ''),
+    DTColumnBuilder.newColumn(null).withOption('defaultContent', '').renderWith(actionsHtml),
     DTColumnBuilder.newColumn('id').withTitle('ID'),
     DTColumnBuilder.newColumn('title').withTitle('Title'),
-    DTColumnBuilder.newColumn('description').withTitle('Description').withOption('sWidth', '50%'),
+    DTColumnBuilder.newColumn('issueNumber').withTitle('Issue Number'),
+    DTColumnBuilder.newColumn('pageCount').withTitle('Page Count'),
     DTColumnBuilder.newColumn('modified').withTitle('Modified'),
     DTColumnBuilder.newColumn('format').withTitle('Format')
   ];
 
-  vm.dtInstance = {};
-  vm.dtInstanceCallback = dtInstanceCallback;
+    showComicInfo = function(ev, id) {
+      var comicId = id;
+      var data;
+      $http.get('/api/marvel/comics/' + comicId).then(function(response) {
+        data = response.data.response;
 
-  function dtInstanceCallback(dtInstance) {
-    vm.dtInstance = dtInstance;
+        $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'templates/dialogChar.html',
+            parent: angular.element(document.body),
+            // targetEvent: ev,
+            clickOutsideToClose: true,
+            fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+          })
+          .then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+      });
+
+    function DialogController($scope, $mdDialog) {
+      $scope.data = data;
+      $scope.hide = function() {
+        $mdDialog.hide();
+      };
+      $scope.cancel = function() {
+        $mdDialog.cancel();
+      };
+      $scope.answer = function(answer) {
+        $mdDialog.hide(answer);
+      };
+    }
+  }
+
+  function createdRow(row, data, dataIndex) {
+      // Recompiling so we can bind Angular directive to the DT
+      $compile(angular.element(row).contents())($scope);
+  }
+
+  function actionsHtml(data, type, full, meta) {
+    return '<md-button class="md-primary md-raised" onclick="showComicInfo(event,' + data.id + ')">Show</md-button>';
+    // return '<md-button class="md-primary btn btn-primary" onclick="alert(\'aa\')">Show</md-button>';
+    // return '<md-button class="md-primary btn btn-primary" ng-click="$scope.charContr.showAdvanced($event)">Show</md-button>';
+  }
+
+  $scope.dtInstanceCallback = function(instance) {
+    $scope.dtInstance = instance;
   }
 
   $('#comics').on('click', 'td.details-control', function() {
