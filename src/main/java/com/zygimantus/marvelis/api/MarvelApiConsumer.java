@@ -127,7 +127,7 @@ public class MarvelApiConsumer extends WsConsumer {
         return marvelResponse;
     }
 
-    public MarvelResponse getSeries(DataTablesRequest dtr) throws MarvelApiException, MarvelApiException, MarvelApiException {
+    public MarvelResponse getSeries(DataTablesRequest dtr) throws MarvelApiException, MarvelApiException, MarvelApiException, MarvelApiException {
 
         DataTablesRequest.Order order = dtr.getOrders().get(0);
 

@@ -51,10 +51,10 @@ require.config({
              deps: ['angular', 'ngAnimate', 'ngAria']
         },
         frontendServices: {
-            deps: ['angular', 'lodash', 'csrfInterceptor', 'ngDatatables']
+            deps: ['angular', 'lodash', 'csrfInterceptor', 'ngDatatables', 'datatables']
         },
         marvelisApp: {
-            deps: [ 'angular', 'jQuery', 'ngMessages', 'ngMaterial', 'frontendServices', 'datatables']
+            deps: [ 'angular', 'jQuery', 'ngMessages', 'ngMaterial', 'frontendServices']
         }
     }
 });

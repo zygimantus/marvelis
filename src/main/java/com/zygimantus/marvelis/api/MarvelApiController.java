@@ -95,8 +95,8 @@ public class MarvelApiController extends ApiController<MarvelResponse> {
         return formats;
     }
 
-    @RequestMapping(value = "series/type", method = GET)
-    protected SeriesQuery.SeriesType[] seriesType() throws IOException, MarvelApiException {
+    @RequestMapping(value = "series/types", method = GET)
+    protected SeriesQuery.SeriesType[] seriesTypes() throws IOException, MarvelApiException {
 
         SeriesQuery.SeriesType[] formats = SeriesQuery.SeriesType.values();
 

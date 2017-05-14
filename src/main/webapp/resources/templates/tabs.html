@@ -5,7 +5,7 @@
       <div ng-controller="CharactersController as charContr">
         <p class="text-danger">You clicked on: <strong>{{ charContr.message }}</strong></p>
         <br>
-        <table id="dataTableChar" datatable="" dt-options="charContr.dtOptions" dt-columns="charContr.dtColumns" class="row-border hover" dt-instance="charContr.dtInstance"></table>
+        <table id="characters" datatable="" dt-options="charContr.dtOptions" dt-columns="charContr.dtColumns" class="row-border hover" dt-instance="charContr.dtInstance"></table>
       </div>
     </md-content>
   </md-tab>
@@ -15,7 +15,7 @@
       <div ng-controller="SeriesController as serContr">
         <p class="text-danger">You clicked on: <strong>{{ serContr.message }}</strong></p>
         <br>
-        <table id="dataTableChar" datatable="" dt-options="serContr.dtOptions" dt-columns="serContr.dtColumns" class="row-border hover" dt-instance="serContr.dtInstance">
+        <table id="series" class="datatable" datatable="" dt-options="serContr.dtOptions" dt-columns="serContr.dtColumns" class="row-border hover" dt-instance="serContr.dtInstance">
           <tfoot>
             <tr>
               <th>Details</th>
@@ -36,7 +36,7 @@
       <div ng-controller="ComicsController as comContr">
         <p class="text-danger">You clicked on: <strong>{{ comContr.message }}</strong></p>
         <br>
-        <table id="dataTableComic" datatable="" dt-options="comContr.dtOptions" dt-columns="comContr.dtColumns" class="row-border hover" dt-instance="comContr.dtInstance">
+        <table id="comics" class="datatable" datatable="" dt-options="comContr.dtOptions" dt-columns="comContr.dtColumns" class="row-border hover" dt-instance="comContr.dtInstance">
           <tfoot>
             <tr>
               <th>Details</th>
